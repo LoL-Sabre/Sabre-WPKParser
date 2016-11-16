@@ -9,6 +9,7 @@ namespace Sabre_SKNParser
 {
     class SKNFile
     {
+        public UInt32 Zero;
         public BinaryReader br;
         public Header header;
         public BoundingBox boundingbox;
@@ -25,7 +26,7 @@ namespace Sabre_SKNParser
             {
                 Materials.Add(new Material(br));
             }
-            br.ReadUInt32();
+            Zero = br.ReadUInt32();
             IndCount = br.ReadUInt32() + 6;
             VertCount = br.ReadUInt32();
             if(header.Version == 4)
@@ -73,7 +74,7 @@ namespace Sabre_SKNParser
         }
         public class BoundingBox
         {
-            public UInt32 Unknown;
+            public UInt32 VertexSize;
             public UInt32 AdditionalsCount;
             public float MinX;
             public float MinY;
@@ -84,7 +85,7 @@ namespace Sabre_SKNParser
             public float Radius;
             public BoundingBox(BinaryReader br)
             {
-                Unknown = br.ReadUInt32();
+                VertexSize = br.ReadUInt32();
                 AdditionalsCount = br.ReadUInt32();
                 MinX = br.ReadSingle();
                 MinY = br.ReadSingle();

@@ -20,7 +20,7 @@ namespace Sabre_SKNParser
             Console.WriteLine("> Face Count { IndCount / 3 } = " + skn.IndCount / 3);
             Console.WriteLine("> Vertice count = " + skn.VertCount);
             Console.WriteLine("------BOUNDING BOX------");
-            Console.WriteLine("> Fifty Two = " + skn.boundingbox.Unknown);
+            Console.WriteLine("> Fifty Two = " + skn.boundingbox.VertexSize);
             Console.WriteLine("> UInt32 = " + skn.boundingbox.AdditionalsCount);
             Console.WriteLine("> UnkFloat1 = " + skn.boundingbox.MinX);
             Console.WriteLine("> UnkFloat2 = " + skn.boundingbox.MinY);
