@@ -25,7 +25,8 @@ namespace Sabre_SKNParser
             {
                 Materials.Add(new Material(br));
             }
-            IndCount = br.ReadUInt32();
+            br.ReadUInt32();
+            IndCount = br.ReadUInt32() + 6;
             VertCount = br.ReadUInt32();
             if(header.Version == 4)
             {
@@ -37,7 +38,7 @@ namespace Sabre_SKNParser
             }
             for(int i = 0; i < VertCount; i++)
             {
-                Vertices.Add(new Vertex(br));
+                Vertices.Add(new Vertex(br, (int)boundingbox.AdditionalsCount));
             }
         }
         public class Header
@@ -63,55 +64,62 @@ namespace Sabre_SKNParser
             public UInt32 NumOfIndices;
             public Material(BinaryReader br)
             {
-                Name = Encoding.ASCII.GetString(br.ReadBytes(68));
-                NumOfVertices = br.ReadUInt32();
+                Name = Encoding.ASCII.GetString(br.ReadBytes(64));
                 StartVertex = br.ReadUInt32();
-                NumOfIndices = br.ReadUInt32();
+                NumOfVertices = br.ReadUInt32();
                 StartIndex = br.ReadUInt32();
+                NumOfIndices = br.ReadUInt32();
             }
         }
         public class BoundingBox
         {
-            public UInt32 FiftyTwo;
-            public UInt32 UInt;
-            public float Unk1;
-            public float Unk2;
-            public float Unk3;
-            public float Unk4;
-            public float Unk5;
-            public float Unk6;
-            public float Unk7;
+            public UInt32 Unknown;
+            public UInt32 AdditionalsCount;
+            public float MinX;
+            public float MinY;
+            public float MinZ;
+            public float MaxX;
+            public float MaxY;
+            public float MaxZ;
+            public float Radius;
             public BoundingBox(BinaryReader br)
             {
-                FiftyTwo = br.ReadUInt32();
-                UInt = br.ReadUInt32();
-                Unk1 = br.ReadSingle();
-                Unk2 = br.ReadSingle();
-                Unk3 = br.ReadSingle();
-                Unk4 = br.ReadSingle();
-                Unk5 = br.ReadSingle();
-                Unk6 = br.ReadSingle();
-                Unk7 = br.ReadSingle();
+                Unknown = br.ReadUInt32();
+                AdditionalsCount = br.ReadUInt32();
+                MinX = br.ReadSingle();
+                MinY = br.ReadSingle();
+                MinZ = br.ReadSingle();
+                MaxX = br.ReadSingle();
+                MaxY = br.ReadSingle();
+                MaxZ = br.ReadSingle();
+                Radius = br.ReadSingle();
             }
         }
         public class Vertex
         {
+            public long Offset;
             public float[] Position = new float[3];
 			public UInt32 BoneIndex;
-			public float[] Weights = new float[4];
+			public float[] Weights = new float[4]; //4 orig
+            public UInt32 BoneHash;
+            public float WeightValue;
 			public float[] Normal = new float[3];
 			public float[] UV = new float[2];
-            public Vertex(BinaryReader br)
+            public List<Int32> Additionals = new List<Int32>();
+            public Vertex(BinaryReader br, int AdditionalCount)
             {
+                Offset = br.BaseStream.Position;
                 for(int i = 0; i < 3; i++)
                 {
                     Position[i] = br.ReadSingle();
                 }
                 BoneIndex = br.ReadUInt32();
-                for(int i = 0; i < 4; i++)
+                for(int i = 0; i < 2; i++) 
                 {
                     Weights[i] = br.ReadSingle();
                 }
+                BoneHash = br.ReadUInt32(); //?
+                WeightValue = br.ReadSingle();
                 for(int i = 0; i < 3; i++)
                 {
                     Normal[i] = br.ReadSingle();
@@ -119,6 +127,10 @@ namespace Sabre_SKNParser
                 for(int i = 0; i < 2; i++)
                 {
                     UV[i] = br.ReadSingle();
+                }
+                for(int i = 0; i < AdditionalCount; i++)
+                {
+                    Additionals.Add(br.ReadInt32());
                 }
             }
         }
